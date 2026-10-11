@@ -1,0 +1,18 @@
+# Merge these patterns into your existing .gitignore after review
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+__pycache__/
+.venv/
+.pytest_cache/
+data/raw/
+data/private/
+data/normalized/private/
+models/checkpoints/
+logs/
+scratch/
+*.evtx
+*.pcap
+*.pcapng
