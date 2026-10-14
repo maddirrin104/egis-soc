@@ -1,5 +1,14 @@
 # Current project state
 
+## Current verified state — 2026-10-14
+
+- The project owner approved **protocol v0.2 execution-order amendment 1** as [D-008](DECISION_LOG.md) on 2026-10-14. The current [protocol](../research-protocol.md) is committed, indexed and present in the working tree with the same SHA-256 `123DA26840190200D018A7B0B8A7B266A67631B6439F865AC96C2AD3E6E316FC`. [D-007](DECISION_LOG.md) and its original SHA-256 `B80A39F0E08CC8D22B1A65776355D1C34D81E7E0F2721A0C34A08CA9C34C1E0A` remain historical. The prior integrity audit correctly identified the approval mismatch at that time; this explicit owner decision resolves that methodological approval discrepancy without retroactively changing the audit.
+- D-008 approves only the audited Section 5/8/11 execution order: W6 Environment B preparation, independence/lineage audits, profiling and pilot/development; W7 method locks, calibration and required audits before conditional confirmatory held-out A/B evaluation. A-01–A-04 and the existing statistical methodology remain intact. The unchanged [eight-week source plan](../EGIS_SOC_Ke_hoach_8_tuan.md) still places held-out B evaluation in W6; the approved protocol governs execution order pending separate source-plan alignment review. No calibration, evaluation or empirical result is claimed.
+- Verified branch `main`, HEAD `d2f54816b0a29de74ebb380ad1ab79fa34a9bfc1`. Before this reconciliation, the index and working tree were clean. This documentation update changes only [DECISION_LOG.md](DECISION_LOG.md), [CURRENT_STATE.md](CURRENT_STATE.md), [TASK_BOARD.md](TASK_BOARD.md), and [HANDOFF.md](HANDOFF.md) in the working tree; no files are staged by this task. Earlier unrelated Git-history and file-provenance uncertainties identified by the repository integrity audit remain unresolved.
+- W1-01, W1-02 and W1-03 remain `DONE`; W1-03 retains the project owner's 2026-10-14 acceptance and focused commit `07bc252f37320568ce68d52f79fab0264e81d6d8`. W1-04 — Annotation Guideline remains `TODO` and is the next implementation task. W1-04 independent annotation, W2 ingestion, W1-07 split/freeze and evaluation access controls, and later experiment gates are not complete.
+
+The sections below are point-in-time historical records. Their older HEAD, staged-protocol, working-copy and next-action statements do not describe the current repository state.
+
 ## W1-03 accepted and complete — 2026-10-14 04:14 UTC
 
 - The project owner explicitly approved W1-03 Data Schemas for completion on 2026-10-14 after reviewing the remediation and acceptance reports. W1-03 is `DONE`; other task statuses are unchanged. The approved four-file, path-limited schema commit is `07bc252f37320568ce68d52f79fab0264e81d6d8` on branch `main`. W1-03 context updates remain unstaged because the context files contain mixed prior task history; unrelated staged and unstaged changes were preserved. The latest [handoff](HANDOFF.md) records the verified commit tree and Git status.
