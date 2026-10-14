@@ -16,3 +16,5 @@ scratch/
 *.evtx
 *.pcap
 *.pcapng
+starter.md
+/docs/workflow.md

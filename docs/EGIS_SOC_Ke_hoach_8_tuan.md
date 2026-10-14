@@ -465,7 +465,7 @@ Service dùng API key Splunk read-only, allowlist indexes/search patterns, query
 | **W7 · 23–29/11** | Full baseline/ablation; annotation agreement; paired bootstrap; human study nếu khả thi; plot, split audit | Frozen tables/figures, reproducible test runs, known limitations |
 | **W8 · 30/11–06/12** | Paper/report, packaging, Streamlit demo, README, model cards, final acceptance tests | Final report/paper draft, public-safe repo, demo từ Splunk, reproducibility checklist |
 
-### 11.1. Milestones bắt buộc
+### Milestones bắt buộc
 
 - **M1 – 25/10:** Có ≥10 incident pilot hoàn chỉnh, parser/schema/annotation có test.
 - **M2 – 08/11:** V3 hybrid có thể đo trên cùng tập test với V2 NLI-only; có phân tích lỗi.
@@ -473,15 +473,6 @@ Service dùng API key Splunk read-only, allowlist indexes/search patterns, query
 - **M4 – 06/12:** Hoàn tất đủ RQ1–RQ3, ablation, efficiency, báo cáo limitations và GitHub demo.
 
 **Lịch phụ thuộc:** không chờ xây xong 80 incidents mới code; khởi động bằng 10–15 pilot incidents. Dataset annotation, hệ thống và metric scripts được phát triển song song từ W2 đến W6.
-
-### 11.2. Phân chia công việc tham khảo (nhóm 2 người)
-
-| Workstream | Thành viên A | Thành viên B | Cùng thực hiện |
-|---|---|---|---|
-| Dataset | Ingestion, Splunk connector | Gold fact schema, annotation tooling | Audit, split/leakage checks |
-| Models | NLI baselines, hybrid fusion | RAG, generation, omission checker | Experiments và error analysis |
-| Evaluation | RQ1, RQ3 scripts | RQ2, latency/UX scripts | Gold test review, confidence intervals |
-| Deliverable | Service/API/reproducibility | Dashboard/report writing | Paper revision, final demo |
 
 ---
 
