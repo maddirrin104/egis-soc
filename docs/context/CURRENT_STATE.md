@@ -1,5 +1,14 @@
 # Current project state
 
+## W1-04 approved methodology and documentation acceptance — 2026-10-15
+
+- The project owner explicitly approved P-01 through P-08 and [annotation guideline v1.0](../annotation-guidelines.md) on 2026-10-15. [D-009](DECISION_LOG.md) records that approval and the guideline SHA-256 `BD01A80553175864A2F1C972A0A272D42194FB65CF583AA4128C7A2B36695C77`. [W1-04](TASK_BOARD.md) is `DONE` for the approved written methodology. This does not certify real annotations, agreement measurements, implemented access controls, a frozen test set, or empirical performance.
+- The finalization began on branch `main` at HEAD `46a883e1c51717b414a4a1ce9a55e017aadde369`, with a pre-existing `README.md` modification, an untracked guideline, and no staged files. The owner-approved W1-04 scope is the guideline plus this task's decision, task-board, current-state, and handoff records; the unrelated README change remains outside it. The D-008 approved [protocol v0.2](../research-protocol.md) still has SHA-256 `123DA26840190200D018A7B0B8A7B266A67631B6439F865AC96C2AD3E6E316FC`.
+- The W1-03 schema validation of all six synthetic JSON blocks passed: three in-scope evidence events, two separately held gold facts, five evaluation claim pairs, four matching synthetic SHA-256 digests, and two expected cross-incident scope rejections. The existing `unittest discover -s tests -v` suite passed all 10 tests. The accompanying [handoff](HANDOFF.md) records validation and its limits; no held-out data, model run, or final experiment was accessed.
+- Still open: W1-07 split/lineage and sealed-gold controls, W2 raw-store digest verification and pilot annotation/audit storage, and W7 locked scoring, calibration, audits, and conditional held-out evaluation after D-008 gates. The source plan's W6 held-out B row remains subordinate to the approved W7 execution order pending separate source-plan alignment review.
+
+The sections below are historical point-in-time records; their older task status and HEAD statements do not supersede this accepted W1-04 state.
+
 ## Current verified state — 2026-10-14
 
 - The project owner approved **protocol v0.2 execution-order amendment 1** as [D-008](DECISION_LOG.md) on 2026-10-14. The current [protocol](../research-protocol.md) is committed, indexed and present in the working tree with the same SHA-256 `123DA26840190200D018A7B0B8A7B266A67631B6439F865AC96C2AD3E6E316FC`. [D-007](DECISION_LOG.md) and its original SHA-256 `B80A39F0E08CC8D22B1A65776355D1C34D81E7E0F2721A0C34A08CA9C34C1E0A` remain historical. The prior integrity audit correctly identified the approval mismatch at that time; this explicit owner decision resolves that methodological approval discrepancy without retroactively changing the audit.
