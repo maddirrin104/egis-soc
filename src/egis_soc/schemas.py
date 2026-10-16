@@ -10,13 +10,26 @@ Pydantic base-class APIs can bypass these contracts and are not trusted input.
 
 from __future__ import annotations
 
+import math
+from collections.abc import Iterable, Iterator, Mapping
 from datetime import datetime, timezone
-from typing import Any, Literal, Self
+from typing import Any, Literal, Self, cast
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    FieldSerializationInfo,
+    JsonValue,
+    TypeAdapter,
+    field_serializer,
+    field_validator,
+    model_validator,
+)
 
 
 SupportLabel = Literal["supported", "contradicted", "insufficient"]
+_JSON_OBJECT_ADAPTER = TypeAdapter(dict[str, JsonValue])
 
 
 class ContractModel(BaseModel):
@@ -40,6 +53,79 @@ def _unique_ids(values: tuple[str, ...]) -> tuple[str, ...]:
     if len(values) != len(set(values)):
         raise ValueError("IDs must be unique")
     return values
+
+
+def _strict_json(value: object, active: set[int] | None = None) -> JsonValue:
+    """Validate exact JSON types and detach containers from untrusted input."""
+
+    if value is None or type(value) in (str, bool, int):
+        return cast(JsonValue, value)
+    if type(value) is float:
+        if not math.isfinite(value):
+            raise ValueError("JSON numbers must be finite")
+        return value
+    if type(value) not in (dict, list):
+        raise ValueError(f"unsupported JSON value: {type(value).__name__}")
+    if active is None:
+        active = set()
+    identity = id(value)
+    if identity in active:
+        raise ValueError("JSON containers must not contain cycles")
+    active.add(identity)
+    try:
+        if type(value) is list:
+            return [_strict_json(item, active) for item in value]
+        result: dict[str, JsonValue] = {}
+        for key, item in value.items():
+            if type(key) is not str:
+                raise ValueError("JSON object keys must be strings")
+            result[key] = _strict_json(item, active)
+        return result
+    finally:
+        active.remove(identity)
+
+
+class _FrozenJSONMapping(Mapping[str, JsonValue]):
+    """Immutable mapping with no mutable backing object exposed to callers."""
+
+    __slots__ = ("_items",)
+
+    def __init__(self, items: Iterable[tuple[str, object]]) -> None:
+        object.__setattr__(self, "_items", tuple(items))
+
+    def __setattr__(self, name: str, value: object) -> None:
+        raise AttributeError("normalized JSON objects are immutable")
+
+    def __getitem__(self, key: str) -> JsonValue:
+        for item_key, value in self._items:
+            if item_key == key:
+                return cast(JsonValue, value)
+        raise KeyError(key)
+
+    def __iter__(self) -> Iterator[str]:
+        return (key for key, _ in self._items)
+
+    def __len__(self) -> int:
+        return len(self._items)
+
+    def __deepcopy__(self, memo: dict[int, object]) -> _FrozenJSONMapping:
+        return self
+
+
+def _freeze_json(value: object) -> object:
+    if isinstance(value, dict):
+        return _FrozenJSONMapping((key, _freeze_json(item)) for key, item in value.items())
+    if isinstance(value, list):
+        return tuple(_freeze_json(item) for item in value)
+    return value
+
+
+def _mutable_json(value: object) -> JsonValue:
+    if isinstance(value, _FrozenJSONMapping):
+        return {key: _mutable_json(item) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return [_mutable_json(item) for item in value]
+    return cast(JsonValue, value)
 
 
 class EvidenceProvenance(ContractModel):
@@ -82,15 +168,34 @@ class EvidenceProvenance(ContractModel):
 
 
 class EvidenceEvent(ContractModel):
-    """Normalized view bound to an immutable raw-snapshot provenance record."""
+    """Normalized view bound to provenance; JSON objects/arrays are read-only after validation."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     evidence_id: str
     incident_id: str
     tenant_id: str
-    normalized_fields: dict[str, Any]
+    normalized_fields: Mapping[str, JsonValue]
     provenance: EvidenceProvenance
+
+    @field_validator("normalized_fields", mode="before")
+    @classmethod
+    def validate_json_fields(cls, value: object) -> JsonValue:
+        if type(value) is not dict:
+            raise ValueError("normalized_fields must be a JSON object")
+        return _strict_json(value)
+
+    @field_validator("normalized_fields")
+    @classmethod
+    def freeze_json_fields(cls, value: Mapping[str, JsonValue]) -> Mapping[str, JsonValue]:
+        return cast(Mapping[str, JsonValue], _freeze_json(value))
+
+    @field_serializer("normalized_fields")
+    def serialize_json_fields(self, value: Mapping[str, JsonValue], info: FieldSerializationInfo) -> JsonValue:
+        detached = cast(dict[str, JsonValue], _mutable_json(value))
+        return _JSON_OBJECT_ADAPTER.dump_python(
+            detached, mode=info.mode, include=info.include, exclude=info.exclude
+        )
 
     @field_validator("evidence_id", "incident_id", "tenant_id")
     @classmethod

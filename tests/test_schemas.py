@@ -1,9 +1,11 @@
 """Focused contract tests with synthetic identifiers and no private telemetry."""
 
 import json
+import re
 import unittest
 from datetime import datetime, timezone
 from hashlib import sha256
+from pathlib import Path
 
 from pydantic import ValidationError
 
@@ -81,7 +83,165 @@ def pair(**changes):
     return ClaimEvidencePair(**(values | changes))
 
 
+def event(normalized_fields=None, **changes):
+    values = {
+        "evidence_id": "E001",
+        "incident_id": "INC-001",
+        "tenant_id": "TENANT-A",
+        "normalized_fields": {} if normalized_fields is None else normalized_fields,
+        "provenance": provenance(),
+    }
+    return EvidenceEvent(**(values | changes))
+
+
 class SchemaTests(unittest.TestCase):
+    def test_approved_annotation_guideline_examples(self):
+        guideline = (
+            Path(__file__).resolve().parents[1] / "docs" / "annotation-guidelines.md"
+        ).read_text(encoding="utf-8")
+        section = guideline.split("## 11. Synthetic worked examples using W1-03 contracts", 1)[1]
+        section = section.split("## 12.", 1)[0]
+        blocks = [json.loads(text) for text in re.findall(r"```json\s*(.*?)\s*```", section, re.S)]
+        self.assertEqual(len(blocks), 6)
+
+        incident = IncidentBundle.model_validate(blocks[0])
+        events = [EvidenceEvent.model_validate(item) for item in blocks[1]]
+        gold = EvaluationGoldRecord.model_validate(blocks[2])
+        pairs = [EvaluationClaimEvidencePair.model_validate(item) for item in blocks[3]]
+        foreign_event = EvidenceEvent.model_validate(blocks[4])
+        foreign_pair = ClaimEvidencePair.model_validate(blocks[5])
+        self.assertEqual((len(events), len(gold.gold_facts), len(pairs)), (3, 2, 5))
+        gold.check_scope(incident)
+        for item in (*events, *pairs):
+            incident.check_scope(item)
+        for item in (foreign_event, foreign_pair):
+            with self.assertRaises(ValueError):
+                incident.check_scope(item)
+        for item in (*events, foreign_event):
+            self.assertEqual(
+                sha256(item.provenance.raw_message.encode("utf-8")).hexdigest(),
+                item.provenance.sha256,
+            )
+            self.assertEqual(
+                EvidenceEvent.model_validate_json(item.model_dump_json()).model_dump(mode="json"),
+                item.model_dump(mode="json"),
+            )
+
+    def test_evidence_json_is_deeply_immutable_and_detached(self):
+        source = {"outcome": "success", "nested": {"array": [1, {"flag": True}]}}
+        snapshot = event(source)
+        with self.assertRaises(ValidationError):
+            snapshot.normalized_fields = {}
+        with self.assertRaises(TypeError):
+            snapshot.normalized_fields["outcome"] = "compromised"
+        with self.assertRaises(TypeError):
+            snapshot.normalized_fields["nested"]["array"] = []
+        with self.assertRaises(AttributeError):
+            snapshot.normalized_fields["nested"]["array"].append(2)
+        with self.assertRaises(TypeError):
+            snapshot.normalized_fields["nested"]["array"][1]["flag"] = False
+        source["outcome"] = "compromised"
+        source["nested"]["array"][1]["flag"] = False
+        source["nested"]["array"].append(2)
+        expected = {"outcome": "success", "nested": {"array": [1, {"flag": True}]}}
+        self.assertEqual(snapshot.model_dump(mode="json")["normalized_fields"], expected)
+        self.assertEqual(snapshot.model_copy(deep=True).model_dump(mode="json")["normalized_fields"], expected)
+
+        dumped = snapshot.model_dump(mode="json")
+        dumped["normalized_fields"]["nested"]["array"][1]["flag"] = False
+        snapshot.model_dump()["normalized_fields"]["nested"]["array"].append(3)
+        self.assertEqual(snapshot.model_dump(mode="json")["normalized_fields"], expected)
+        self.assertEqual(json.loads(snapshot.model_dump_json())["normalized_fields"], expected)
+        filtered = snapshot.model_dump(
+            exclude={"normalized_fields": {"nested": {"array": True}}}
+        )
+        self.assertEqual(filtered["normalized_fields"], {"outcome": "success", "nested": {}})
+        self.assertEqual(
+            json.loads(snapshot.model_dump_json(exclude={"normalized_fields": {"outcome": True}}))[
+                "normalized_fields"
+            ],
+            {"nested": {"array": [1, {"flag": True}]}},
+        )
+        with self.assertRaises(ValueError):
+            snapshot.model_copy(update={"normalized_fields": {"outcome": "compromised"}})
+
+    def test_evidence_accepts_nested_json_without_type_coercion(self):
+        fields = {
+            "boolean": True, "integer": 4624, "float": 1.25, "string": "ok", "null": None,
+            "array": [False, 0, 0.0, "0", None, {"empty_array": [], "empty_object": {}}],
+        }
+        snapshot = event(fields)
+        dumped = snapshot.model_dump(mode="json")["normalized_fields"]
+        self.assertEqual(dumped, fields)
+        self.assertIs(type(dumped["boolean"]), bool)
+        self.assertIs(type(dumped["integer"]), int)
+        self.assertIs(type(dumped["float"]), float)
+        self.assertIs(type(dumped["array"][0]), bool)
+        self.assertIs(type(dumped["array"][1]), int)
+        self.assertIs(type(dumped["array"][2]), float)
+        self.assertEqual(snapshot.model_dump_json(), snapshot.model_dump_json())
+        self.assertEqual(
+            EvidenceEvent.model_validate_json(snapshot.model_dump_json()).model_dump(mode="json"),
+            snapshot.model_dump(mode="json"),
+        )
+        self.assertEqual(
+            EvidenceEvent.model_validate(snapshot.model_dump(mode="json")).model_dump(mode="json"),
+            snapshot.model_dump(mode="json"),
+        )
+
+    def test_evidence_rejects_nonfinite_numbers_at_every_depth(self):
+        for invalid in (float("nan"), float("inf"), -float("inf")):
+            for fields in ({"number": invalid}, {"nested": {"number": invalid}}, {"array": [0, {"number": invalid}]}):
+                with self.subTest(fields=fields):
+                    with self.assertRaises(ValidationError):
+                        event(fields)
+            with self.assertRaises(ValidationError):
+                EvidenceEvent.model_validate_json(
+                    event({"number": 0}).model_dump_json().replace('"number":0', f'"number":{invalid}')
+                )
+
+    def test_evidence_rejects_non_json_values_and_cycles(self):
+        for invalid in ({1, 2}, b"abc", object(), (1, 2)):
+            for fields in ({"value": invalid}, {"nested": [{"value": invalid}]}):
+                with self.subTest(invalid=repr(invalid), fields=repr(fields)):
+                    with self.assertRaises(ValidationError):
+                        event(fields)
+        with self.assertRaises(ValidationError):
+            event({1: "non-string key"})
+        with self.assertRaises(ValidationError):
+            event(["not an object"])
+        cycle = []
+        cycle.append(cycle)
+        with self.assertRaises(ValidationError):
+            event({"cycle": cycle})
+
+    def test_existing_evidence_and_reference_guards(self):
+        for label in ("supported", "contradicted"):
+            with self.subTest(label=label):
+                with self.assertRaises(ValidationError):
+                    pair(label=label, evidence_ids=[])
+        with self.assertRaises(ValidationError):
+            fact(evidence_ids=[])
+        with self.assertRaises(ValidationError):
+            pair(evidence_ids=["E001", "E001"])
+        with self.assertRaises(ValidationError):
+            evaluation_gold(evidence_ids=["E001", "E001"])
+        with self.assertRaises(ValidationError):
+            event(extra_field="unexpected")
+        with self.assertRaises(ValidationError):
+            provenance(extra_field="unexpected")
+        with self.assertRaises(ValidationError):
+            bundle(extra_field="unexpected")
+        with self.assertRaises(ValueError):
+            provenance().model_copy(update={"sha256": "invalid"})
+
+    def test_timezone_offsets_normalize_to_utc(self):
+        local = provenance(timestamp_utc="2026-10-12T17:00:00+07:00")
+        self.assertEqual(local.timestamp_utc, datetime(2026, 10, 12, 10, tzinfo=timezone.utc))
+        self.assertEqual(local.model_dump(mode="json")["timestamp_utc"], "2026-10-12T10:00:00Z")
+        with self.assertRaises(ValidationError):
+            provenance(timestamp_utc="2026-10-12T10:00:00")
+
     def test_source_plan_shapes_and_utc_serialization(self):
         event = EvidenceEvent(
             evidence_id="E001", incident_id="INC-001", tenant_id="TENANT-A",
