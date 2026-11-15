@@ -1,0 +1,17 @@
+# Python source layout
+
+The import root remains `egis_soc`. New code should use the domain packages below. The root-level modules moved in this refactor are compatibility aliases: importing an old path and its new path returns the same module object, including for monkeypatching. Existing scripts, tests and historical document links therefore keep working.
+
+| Package | Responsibility | Examples |
+| --- | --- | --- |
+| [`evidence/`](../src/egis_soc/evidence/) | Canonical ingestion, evidence identity/storage, scoped bundles and annotation storage | `canonical_ingestion.py`, `evidence_store.py`, `annotation_store.py`, `real_evidence_ledger.py` |
+| [`sources/`](../src/egis_soc/sources/) | Source-specific adapters, intake, authorization, XML replay and identity previews | `o5_adapter.py`, `public_dev_intake.py`, `splunk_xml_replay.py`, `source_authorization.py` |
+| [`pds01/`](../src/egis_soc/pds01/) | PDS-01 source review, boundary proposals, owner workflow and guarded v3 ledger | `pds01_owner_review.py`, `pds01_review_workflow.py`, `pds01_v3_ledger.py` |
+| [`governance/`](../src/egis_soc/governance/) | Lineage/split controls, evaluation access, integrity and train-only mutation guards | `lineage.py`, `split_freeze.py`, `evaluation_boundary.py`, `train_mutations.py` |
+| [`development/`](../src/egis_soc/development/) | Grouped W3 data, retrieval, V1/V2, benchmark and QA imports | `from egis_soc.development import DevelopmentRetriever, DevelopmentV1` |
+
+The W2/W3 private checkpoint and smoke records bind the bytes and paths of `pds01_provisional.py`, `pds01_automated_review.py`, `development_data.py`, `development_retrieval.py`, `development_benchmark.py`, `development_v1.py` and `development_v2.py`. Their implementations remain at the package root; `development/__init__.py` provides grouped imports without changing those hashes. `schemas.py` retains its approved W1 hash. `public_pilot_activation.py` and `source_registry.py` locate repository documents relative to their files, so they also remain at their current paths. The pre-existing edits in `ingestion.py` and `solo_development_authorization.py` were left in place.
+
+**W3 package follow-up (2026-11-01):** New code can import `egis_soc.development.data`, `.retrieval`, `.v1`, `.v2`, `.benchmark` and `.benchmark_run`. These six submodule paths alias the exact root implementation module objects, preserving old import identity and every pinned source hash. The W3-04 private manifest additionally pins the root `development_benchmark_run.py` path and byte hash, so its body remains there. The unpinned repeated-run QA implementation now lives at [`development/qa.py`](../src/egis_soc/development/qa.py); [`development_v2_qa.py`](../src/egis_soc/development_v2_qa.py) aliases it for existing scripts and tests. [`development/__init__.py`](../src/egis_soc/development/__init__.py) exports the QA and benchmark-run functions. The [layout regression test](../tests/test_development_layout.py) checks all seven old/new module identities. Future W3/W4 code should use the grouped paths; historical scripts may keep the pinned root paths until a separately verified checkpoint migration.
+
+This layout does not change the data contract: PDS-01 remains private, train-designated and `NOT_GOLD`; W2 pilot acceptance, original M1 and real W3 metrics remain gated by the existing research protocol. The compatibility aliases can be removed only after all callers and historical checkpoint/reproducibility requirements have been reviewed.
