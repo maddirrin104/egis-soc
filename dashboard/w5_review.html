@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EGIS-SOC synthetic analyst review</title>
+  <style>
+    body { font: 16px/1.5 system-ui, sans-serif; max-width: 1100px; margin: auto; padding: 1.5rem; color: #17212b; background: #f5f7fa; }
+    section, article { background: white; border: 1px solid #c9d2dc; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+    h1, h2, h3 { line-height: 1.2; }
+    .warning { border-left: 5px solid #a53b19; padding-left: .75rem; }
+    .muted { color: #52606d; }
+    label { display: block; margin: .6rem 0; }
+    input, textarea, select, button { font: inherit; padding: .4rem; max-width: 100%; }
+    textarea { display: block; width: min(100%, 700px); min-height: 5rem; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #eef2f5; padding: .75rem; }
+    button { cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>EGIS-SOC synthetic report review</h1>
+  <p class="warning">Synthetic engineering packet. Automated labels and source candidates are not gold. Reviewer identity is self-attested in this local prototype.</p>
+  <section>
+    <label>Session token <input id="token" type="password" autocomplete="off"></label>
+    <button id="load">Load packet</button>
+    <p id="status" role="status"></p>
+  </section>
+  <main id="packet" hidden>
+    <section><h2>Scope and warnings</h2><div id="scope"></div><ul id="warnings"></ul></section>
+    <section><h2>Structured report</h2><pre id="structured"></pre></section>
+    <section><h2>Final claims</h2><div id="final"></div></section>
+    <section><h2>Draft candidates and S2 decisions</h2><div id="candidates"></div></section>
+    <section><h2>Operational omission candidates</h2><div id="omissions"></div></section>
+    <section><h2>Repair history and review queue</h2><div id="history"></div><div id="queue"></div></section>
+    <section><h2>Scoped evidence</h2><div id="evidence"></div></section>
+    <section>
+      <h2>Analyst review actions</h2>
+      <p>Actions are written separately. Approval needs an explicit checkbox and never changes automated predictions.</p>
+      <label>Reviewer ID <input id="reviewer" autocomplete="off"></label>
+      <label>Action <select id="action"><option value="note">Note</option><option value="correction">Correction</option><option value="request_changes">Request changes</option><option value="approve">Approve</option></select></label>
+      <label>Claim ID for correction <input id="claim"></label>
+      <label>Note, correction, or approval rationale <textarea id="text"></textarea></label>
+      <label><input id="confirm" type="checkbox"> I explicitly approve this synthetic packet</label>
+      <button id="submit">Record action</button>
+      <h3>Recorded actions</h3><div id="reviews"></div>
+    </section>
+  </main>
+  <script src="/review.js"></script>
+</body>
+</html>

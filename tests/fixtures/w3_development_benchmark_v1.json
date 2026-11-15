@@ -1,0 +1,46 @@
+{
+  "version": "w3-synthetic-benchmark-fixture-1",
+  "label_provenance": "SYNTHETIC_KNOWN_ANSWER",
+  "train": {
+    "incident_id": "SYN-W3-TRAIN",
+    "events": [
+      {"id": "TR-E1", "message": "The archive task completed successfully on host-a."},
+      {"id": "TR-E2", "message": "User alice logged in successfully on host-b."},
+      {"id": "TR-E3", "message": "A DNS query for update.example was observed on host-c."},
+      {"id": "TR-E4", "message": "The service queried configuration on host-d."}
+    ],
+    "pairs": [
+      {"id": "TR-P1", "claim": "The archive task completed successfully on host-a.", "evidence_ids": ["TR-E1"], "expected": "supported"},
+      {"id": "TR-P2", "claim": "User alice logged in successfully on host-b.", "evidence_ids": ["TR-E2"], "expected": "supported"},
+      {"id": "TR-P3", "claim": "The archive task failed on host-a.", "evidence_ids": ["TR-E1"], "expected": "contradicted"},
+      {"id": "TR-P4", "claim": "User alice failed to log in on host-b.", "evidence_ids": ["TR-E2"], "expected": "contradicted"},
+      {"id": "TR-P5", "claim": "The DNS query exfiltrated files from host-c.", "evidence_ids": ["TR-E3"], "expected": "insufficient"},
+      {"id": "TR-P6", "claim": "The service restarted on host-d.", "evidence_ids": ["TR-E4"], "expected": "insufficient"}
+    ]
+  },
+  "evaluation": {
+    "incident_id": "SYN-W3-EVAL",
+    "events": [
+      {"id": "EV-E1", "message": "The backup task completed successfully on host-k."},
+      {"id": "EV-E2", "message": "User bob failed to authenticate on host-m."},
+      {"id": "EV-E3", "message": "A DNS query for update.example was observed on host-k."},
+      {"id": "EV-E4", "message": "The service queried configuration on host-m."},
+      {"id": "EV-E5", "message": "The gamma process started on host-m."},
+      {"id": "EV-E6", "message": "The firewall denied an outbound connection from host-k."}
+    ],
+    "queries": [
+      {"id": "Q1", "query": "backup task host-k", "gold_evidence_ids": ["EV-E1"]},
+      {"id": "Q2", "query": "gamma process host-m", "gold_evidence_ids": ["EV-E5"]},
+      {"id": "Q3", "query": "bob authentication failure", "gold_evidence_ids": ["EV-E2"]},
+      {"id": "Q4", "query": "firewall outbound connection", "gold_evidence_ids": ["EV-E6"]}
+    ],
+    "pairs": [
+      {"id": "EV-P1", "claim": "The backup task completed successfully on host-k.", "evidence_ids": ["EV-E1"], "expected": "supported"},
+      {"id": "EV-P2", "claim": "The gamma process started on host-m.", "evidence_ids": ["EV-E5"], "expected": "supported"},
+      {"id": "EV-P3", "claim": "User bob authenticated successfully on host-m.", "evidence_ids": ["EV-E2"], "expected": "contradicted"},
+      {"id": "EV-P4", "claim": "The firewall allowed an outbound connection from host-k.", "evidence_ids": ["EV-E6"], "expected": "contradicted"},
+      {"id": "EV-P5", "claim": "The DNS query exfiltrated files from host-k.", "evidence_ids": ["EV-E3"], "expected": "insufficient"},
+      {"id": "EV-P6", "claim": "The service restarted on host-m.", "evidence_ids": ["EV-E4"], "expected": "insufficient"}
+    ]
+  }
+}

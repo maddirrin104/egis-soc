@@ -1,5 +1,16 @@
 # Task board (statuses require human/verified evidence)
 
+## Public synthetic demo scope — 2026-11-15
+
+| Task | Status | Evidence / remaining gate |
+| --- | --- | --- |
+| W8 synthetic end-to-end and local review | **ENGINEERING TESTED, SYNTHETIC ONLY** | [README](../../README.md), [W8 archive v5](../../experiments/w8_02_synthetic_demo_v5/), [W8 tests](../../tests/test_w8_review.py) and [local API](../../src/egis_soc/w8_api.py). W8 focused 15/15 and the branch's available offline suite 182/182 PASS. Reviewer actions are operational demo records, never evaluation gold. |
+| W3–W7 synthetic source subset | **ENGINEERING TESTED IN THIS BRANCH** | [W5-CP source layout](../src-layout.md), W5-08 v2/W6 v3/W7 v8 archive checks PASS. This branch deliberately omits unpublished W2 private/source-custody workflows and their tests; it is not the full local 527-test tree. |
+| Reproducibility and publication | **PARTIAL** | Current archive v5 checks exact source/fixture/report bytes; clean dependency reinstall and final public-content review remain to be recorded. Never include private raw logs, credentials, sealed labels or operational review storage. |
+| Research and real integrations | **BLOCKED / NOT RUN** | Real Splunk and actual W8 LLM/NLI inference NOT RUN; W2 independent gold/pilot gates, W4-05, W5-09, D-032, independent Environment B, official W7 calibration and held-out RQ1–RQ3 remain open. |
+
+**Older W1 task rows below are historical public-base records.** This branch's present synthetic status is summarized above; no owner approval or empirical result is inferred from packaging.
+
 | Task | Priority | Status | Acceptance |
 | --- | --- | --- | --- |
 | W1-01 Context verification | P0 | DONE | Context files and Git status checked; active VS Code Codex instructions and `egis-handoff` discovery, no conflicts, and validation/handoff evidence confirmed and approved by user on 2026-10-12 |

@@ -1,0 +1,67 @@
+{
+  "version": "w4-matched-synthetic-fixture-1",
+  "label_provenance": "SYNTHETIC_KNOWN_ANSWER",
+  "partition": "train",
+  "lineage_group": "SYNTHETIC",
+  "cases": [
+    {
+      "id": "W4-C01", "expected": "supported", "claim": "record=R1; event=logon; actor=alice; host=WS01; time=2026-01-01T00:00:00+00:00; outcome=success",
+      "evidence_ids": ["W4-E01"], "citation_ids": ["W4-E01"],
+      "events": [{"id": "W4-E01", "time": "2026-01-01T00:00:00+00:00", "event_data": {"record_ref": "R1", "event_type": "logon", "actor": "alice", "host": "WS01", "outcome": "success"}}]
+    },
+    {
+      "id": "W4-C02", "expected": "contradicted", "claim": "record=R2; event=logon; actor=alice; host=WS01; time=2026-01-01T00:00:00+00:00; outcome=success",
+      "evidence_ids": ["W4-E02"], "citation_ids": ["W4-E02"],
+      "events": [{"id": "W4-E02", "time": "2026-01-01T00:00:00+00:00", "event_data": {"record_ref": "R2", "event_type": "logon", "actor": "alice", "host": "WS01", "outcome": "failure"}}]
+    },
+    {
+      "id": "W4-C03", "expected": "supported", "claim": "record=R3; event=logon; actor=bob; host=WS02; time=2026-01-01T00:00:00+00:00; outcome=success",
+      "evidence_ids": ["W4-E03B", "W4-E03A"], "citation_ids": ["W4-E03B", "W4-E03A"],
+      "events": [
+        {"id": "W4-E03A", "time": "2026-01-01T00:00:00+00:00", "event_data": {"record_ref": "R3", "actor": "bob", "host": "WS02"}},
+        {"id": "W4-E03B", "time": "2026-01-01T00:00:00+00:00", "event_data": {"record_ref": "R3", "event_type": "logon", "outcome": "success"}}
+      ]
+    },
+    {
+      "id": "W4-C04", "expected": "insufficient", "claim": "record=R4; event=logon; actor=alice; host=WS01; time=2026-01-01T00:00:00+00:00; outcome=success",
+      "evidence_ids": ["W4-E04"], "citation_ids": ["W4-E04"],
+      "events": [{"id": "W4-E04", "time": "2026-01-01T00:00:00+00:00", "event_data": {"record_ref": "R4", "event_type": "logon", "host": "WS01", "outcome": "success"}}]
+    },
+    {
+      "id": "W4-C05", "expected": "insufficient", "claim": "record=R5; event=logon; actor=alice; host=WS01; time=2026-01-01T00:00:00+00:00; outcome=success",
+      "evidence_ids": ["W4-E05A", "W4-E05B"], "citation_ids": ["W4-E05A", "W4-E05B"],
+      "events": [
+        {"id": "W4-E05A", "time": "2026-01-01T00:00:00+00:00", "event_data": {"record_ref": "R5", "event_type": "logon", "actor": "alice", "host": "WS01", "outcome": "success"}},
+        {"id": "W4-E05B", "time": "2026-01-01T00:00:00+00:00", "event_data": {"record_ref": "R5", "event_type": "logon", "actor": "bob", "host": "WS01", "outcome": "success"}}
+      ]
+    },
+    {
+      "id": "W4-C06", "expected": "supported", "claim": "record=R6; event=logon; actor=alice; host=WS01; time=2026-01-01T00:00:00+00:00; outcome=success",
+      "evidence_ids": ["W4-E06A", "W4-E06B"], "citation_ids": ["W4-E06A", "W4-E06B"],
+      "events": [
+        {"id": "W4-E06A", "time": "2026-01-01T00:00:00+00:00", "event_data": {"record_ref": "R6", "event_type": "logon", "actor": "alice", "host": "WS01", "outcome": "success"}},
+        {"id": "W4-E06B", "time": "2026-01-01T00:00:00+00:00", "event_data": {"record_ref": "OTHER", "event_type": "process", "actor": "bob", "host": "WS02", "outcome": "started"}}
+      ]
+    },
+    {
+      "id": "W4-C07", "expected": "supported", "claim": "record=R7; event=logon; actor=alice; host=WS01; time=2026-01-01T00:00:00+00:00; outcome=success",
+      "evidence_ids": ["W4-E07"], "citation_ids": [],
+      "events": [{"id": "W4-E07", "time": "2026-01-01T00:00:00+00:00", "event_data": {"record_ref": "R7", "event_type": "logon", "actor": "alice", "host": "WS01", "outcome": "success"}}]
+    },
+    {
+      "id": "W4-C08", "expected": "insufficient", "claim": "The DNS query exfiltrated files.",
+      "evidence_ids": ["W4-E08"], "citation_ids": ["W4-E08"],
+      "events": [{"id": "W4-E08", "time": "2026-01-01T00:00:00+00:00", "event_data": {"message": "A DNS query was observed; no file transfer was observed."}}]
+    },
+    {
+      "id": "W4-C09", "expected": "contradicted", "claim": "record=R9; event=logon; actor=alice; host=WS01; time=2026-01-01T00:00:00+00:00; outcome=success",
+      "evidence_ids": ["W4-E09"], "citation_ids": ["W4-E09"],
+      "events": [{"id": "W4-E09", "time": "2026-01-01T00:00:00+00:00", "event_data": {"record_ref": "R9", "event_type": "process", "actor": "alice", "host": "WS01", "outcome": "success"}}]
+    },
+    {
+      "id": "W4-C10", "expected": "supported", "claim": "record=R10; event=logon; actor=alice; host=WS01; time=2026-01-01T00:00:00+00:00; outcome=success",
+      "evidence_ids": ["W4-E10"], "citation_ids": ["W4-E10"],
+      "events": [{"id": "W4-E10", "time": "2026-01-01T00:00:00+00:00", "padding_tokens": 600, "event_data": {"record_ref": "R10", "event_type": "logon", "actor": "alice", "host": "WS01", "outcome": "success"}}]
+    }
+  ]
+}

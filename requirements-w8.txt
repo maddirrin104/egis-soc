@@ -1,0 +1,7 @@
+# Full development/test stack; no automatic model download is performed here.
+-r requirements-w3.txt
+-r requirements-w6.txt
+-r requirements-w7.txt
+pydantic==2.14.1
+psutil==7.2.2
+scipy==1.18.1

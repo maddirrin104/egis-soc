@@ -1,0 +1,50 @@
+{
+  "version": "w8-00-offline-demo-1",
+  "case": "positive",
+  "bundle": {
+    "incident_id": "SYN-W8-POSITIVE",
+    "tenant_id": "SYN-TENANT-A",
+    "environment_id": "SYNTHETIC",
+    "source_dataset": "synthetic",
+    "scenario_family": "authored_windows_logon_process",
+    "alert_ids": ["SYN-ALERT-POSITIVE"],
+    "evidence_ids": ["E-P1", "E-P2", "E-P3"]
+  },
+  "query": "WS01",
+  "events": [
+    {
+      "evidence_id": "E-P1",
+      "incident_id": "SYN-W8-POSITIVE",
+      "tenant_id": "SYN-TENANT-A",
+      "timestamp_utc": "2026-01-01T00:00:00+00:00",
+      "normalized_fields": {"record_ref": "R1", "event_type": "logon", "actor": "alice", "host": "WS01", "outcome": "failure"},
+      "raw_message": "Synthetic Windows Security Event 4625, record R1: failed logon for alice on WS01."
+    },
+    {
+      "evidence_id": "E-P2",
+      "incident_id": "SYN-W8-POSITIVE",
+      "tenant_id": "SYN-TENANT-A",
+      "timestamp_utc": "2026-01-01T00:02:00+00:00",
+      "normalized_fields": {"record_ref": "R2", "event_type": "logon", "actor": "alice", "host": "WS01", "outcome": "success"},
+      "raw_message": "Synthetic Windows Security Event 4624, record R2: successful logon for alice on WS01."
+    },
+    {
+      "evidence_id": "E-P3",
+      "incident_id": "SYN-W8-POSITIVE",
+      "tenant_id": "SYN-TENANT-A",
+      "timestamp_utc": "2026-01-01T00:03:00+00:00",
+      "normalized_fields": {"record_ref": "R3", "event_type": "process", "actor": "alice", "host": "WS01", "outcome": "created", "image": "cmd.exe"},
+      "raw_message": "Synthetic Sysmon Event 1, record R3: cmd.exe process creation on WS01 by alice."
+    }
+  ],
+  "draft_text": "record=R2; event=logon; actor=alice; host=WS01; time=2026-01-01T00:02:00+00:00; outcome=success [E-P2].",
+  "reviews": [
+    {
+      "text": "record=R2; event=logon; actor=alice; host=WS01; time=2026-01-01T00:02:00+00:00; outcome=success",
+      "citation_ids": ["E-P2"],
+      "cited_set_support": "supported",
+      "rationale": "Authored synthetic review: exact record, actor, host, time and outcome in E-P2; no compromise inference."
+    }
+  ],
+  "repair": "none"
+}

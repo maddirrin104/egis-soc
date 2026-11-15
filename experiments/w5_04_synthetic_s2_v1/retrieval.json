@@ -1,0 +1,1 @@
+{"evidence":[{"evidence_id":"E1","passage":"actor: alice\nevent_type: logon\nhost: WS01\noutcome: success\nrecord_ref: R1","raw_sha256":"218080a7c650431d5684ca718fa63b70d5f71374baf446c41e3c7b0feec42b12","source_ref":"synthetic:w5:E1","timestamp_utc":"2026-01-01T00:00:00+00:00"}],"incident_id":"SYN-W5","query":"logon","tenant_id":"SYN-T"}

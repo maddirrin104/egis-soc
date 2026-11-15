@@ -1,5 +1,7 @@
 # Context entry point
 
+**Public synthetic-demo branch:** start with the [README](../../README.md), then the [current state](CURRENT_STATE.md), [task board](TASK_BOARD.md) and [latest handoff](HANDOFF.md). This branch contains a reviewed synthetic source subset; local unpublished research/custody work is outside its scope. Historical W1 records below remain for provenance.
+
 **Read in this order** (avoid opening the complete research plan unless task-relevant):
 
 1. [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md) — brief and invariants.

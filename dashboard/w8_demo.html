@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EGIS-SOC W8 synthetic incident demo</title>
+  <link rel="stylesheet" href="/w8.css">
+</head>
+<body>
+  <h1>EGIS-SOC synthetic incident review demo</h1>
+  <p class="warning">SYNTHETIC DEMO with deterministic adapters. Automated verdicts are development diagnostics, not human gold or real model inference. Analyst approval never creates evaluation gold.</p>
+  <section>
+    <label for="case">Synthetic incident</label>
+    <select id="case"><option value="positive">Positive evidence case</option><option value="negative">Unsupported claim and omission case</option></select>
+    <button id="run">Run pipeline</button>
+    <a id="export" hidden>Export report JSON</a>
+    <p id="status" role="status"></p>
+  </section>
+  <section>
+    <h2>Local analyst sign-in</h2>
+    <p class="muted">Review controls require an owner-configured local account. The session token stays in this page's memory and expires automatically.</p>
+    <label for="password">Password</label>
+    <input id="password" type="password" autocomplete="current-password">
+    <button id="login">Sign in</button>
+    <button id="logout" hidden>Sign out</button>
+    <p id="authStatus" role="status">Read-only synthetic demo.</p>
+  </section>
+  <main id="packet" hidden>
+    <section><h2>Incident and status</h2><div id="scope"></div><h3>Warnings</h3><ul id="warnings"></ul></section>
+    <section><h2>Overview and timeline</h2><div id="overview"></div><div id="timeline"></div></section>
+    <section><h2>Verified final claims</h2><div id="final"></div></section>
+    <section><h2>Draft claims and S/C/I verdicts</h2><div id="draft"></div></section>
+    <section><h2>Omission candidates</h2><div id="omissions"></div></section>
+    <section><h2>Controlled repair and review queue</h2><div id="repair"></div><div id="queue"></div></section>
+    <section><h2>Scoped citations and evidence</h2><div id="evidence"></div></section>
+    <section><h2>Structured report</h2><pre id="structured"></pre></section>
+    <section id="reviewPanel" hidden>
+      <h2>Authenticated analyst review</h2>
+      <p class="warning">These decisions apply to this synthetic report only. Requests for changes do not alter evidence or verified claims. A new immutable version is recorded for each action.</p>
+      <p id="reviewVersion"></p>
+      <div class="reviewForm">
+        <label>Action
+          <select id="reviewAction">
+            <option value="start_review">Start review</option>
+            <option value="accept_claim">Accept final claim</option>
+            <option value="reject_claim">Reject claim</option>
+            <option value="request_claim_changes">Request claim changes</option>
+            <option value="note">Add note</option>
+            <option value="request_report_changes">Request report changes</option>
+            <option value="approve_report">Approve report</option>
+            <option value="reject_report">Reject report</option>
+            <option value="start_revision">Start new revision</option>
+          </select>
+        </label>
+        <label>Claim (for claim actions or optional note)
+          <select id="reviewClaim"><option value="">Report-wide</option></select>
+        </label>
+      </div>
+      <label for="reviewReason">Reason / analyst note</label>
+      <textarea id="reviewReason" maxlength="4000"></textarea>
+      <button id="reviewSubmit">Record review action</button>
+      <button id="reviewExport">Export reviewed JSON</button>
+      <p id="reviewStatus" role="status"></p>
+      <h3>Review state</h3><pre id="reviewState"></pre>
+      <h3>Audit records</h3><div id="audit"></div>
+    </section>
+  </main>
+  <script src="/w8.js"></script>
+</body>
+</html>

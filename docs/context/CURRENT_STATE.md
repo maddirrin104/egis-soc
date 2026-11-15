@@ -1,5 +1,14 @@
 # Current project state
 
+## Public synthetic demo branch — 2026-11-15
+
+- This branch is based on public `origin/main` at `37e9703208fa0e077f319149bd5c2f478a725e9d`. It includes a reviewed W3–W5 synthetic source subset from the previously verified W5-CP path inventory, plus W4 rule/fusion dependencies and W6–W8 synthetic code, fixtures, tests and current archives. The local research worktree and its unpublished W2–W4 commits are separate; this branch does not claim to contain the complete private development tree.
+- The offline W8 demo has one source-exact Supported claim citing E-P2 in the positive fixture. The negative fixture removes a directly Contradicted success claim, abstains on an Insufficient causal claim and re-verifies one source-exact addition. Draft text and NLI scores are deterministic synthetic adapters. The authenticated review service is optional, local and single-owner; its operational decisions remain `NOT_GOLD`.
+- In this isolated source tree, W8 focused tests **15/15 PASS** and the entire available offline suite **182/182 PASS**. W5-08 v2, W6 v3, W7 v8 and W8 v5 archive checks PASS. These runs reused the existing machine's Python environment; a clean dependency reinstall on another machine is NOT VERIFIED. Historical W8 v3/v4 archives are preserved, while v5 is the current code-pinned archive.
+- Real Splunk and actual W8 LLM/NLI inference are NOT RUN. W2 independently reviewed gold and real pilots, W4-05, W5-09, D-032 configuration lock, Environment B independence, official W7 calibration and held-out RQ1–RQ3 remain open. A synthetic pass is not research acceptance or production readiness. See the [README](../../README.md), [W8-01 package note](../w8-01-local-review-2026-11-15.md) and [public-safe checklist](../w8-01-public-safe-checklist.md).
+
+**Earlier sections below are historical records from the public W1 base.** They do not override the current synthetic-demo status above or imply that unpublished local W2–W4 work is included in this branch.
+
 ## W1-06/W1-08/W1-09 scoped owner acceptance — 2026-10-17
 
 - The project owner explicitly approved [threat model v1.0](../threat-model.md), [literature matrix v0.3](../literature-matrix.md) and [architecture v1.0](../architecture-v1.md) **for Week 1 documentation/design only**, recorded in [D-014](DECISION_LOG.md). [TASK_BOARD.md](TASK_BOARD.md) marks W1-06, W1-08 and W1-09 `DONE` only for that scope. The documents retain the approved protocol/annotation methodology and actual W1-03/W1-07 boundaries; no threat test, deployment, live SIEM connection, model experiment, final evaluation or EGIS empirical result follows from this acceptance.
